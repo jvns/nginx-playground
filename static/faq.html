@@ -1,0 +1,84 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title> nginx playground </title>
+    <link rel="stylesheet" type="text/css" href="css/tailwind-classes.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<style>
+    body {
+        font-family: Inter;
+    }
+</style>
+
+
+<header style="height: 60px" class="flex justify-between p-2 border-b border-gray-400">
+    <div>
+        <h1 class="text-2xl md:text-3xl inline-block"><a href="/">★ nginx playground ★</a></h1>
+        <div class="inline-block ml-4">a <a class="text-purple-700 underline" href="https://wizardzines.com">wizard zines</a> project</div>
+    </div>
+</header>
+
+<div class="p-8" style="max-width: 800px">
+    <h1 class="text-2xl">
+        What's this?
+    </h1>
+
+    <p class="my-4">
+        It's like <a class="underline text-purple-700" href="https://codepen.io">codepen</a> for nginx -- you paste in an nginx config, and then a server starts nginx for you and runs any <code>curl</code> or <code>http</code> command you want against
+        that nginx server.
+    </p>
+
+    <h1 class="text-2xl">
+        Does it really run nginx?
+    </h1>
+
+    <p class="my-4">
+        Yes. Every time you hit "run", it'll start an instance of nginx 1.21.
+    </p>
+    <h1 class="text-2xl">
+        What services are running on the host?
+    </h1>
+
+    <p class="my-4">
+        There's a forked version of <a href="https://github.com/mccutchen/go-httpbin"></a>go-httpbin</a>
+    running on port 7777. It responds to every request by echoing back the
+    method, headers, URL, and body as JSON.
+    </p>
+
+    <h1 class="text-2xl">
+        How's the security?
+    </h1>
+
+    <p class="my-4">
+        There's no validation on what kinds of nginx configs you can use, and I'm sure there's some way to you run arbitrary code. Please don't do anything too malicious, I guess? The frontend is a static site, so all you can do is compromise a mostly stateless
+        backend API server.
+    </p>
+    <p class="my-4">
+        Your nginx runs in a separate network namespace that's disconnected from the host, so it's not able to make requests to the outside world.
+    </p>
+    <p class="my-4">
+        I wouldn't paste anything extremely sensitive into this site, but you probably shouldn't be pasting sensitive things into random internet websites anyway :)
+    </p>
+
+    <h1 class="text-2xl">
+        Where's the server code?
+    </h1>
+
+    <p class="my-4">
+        I haven't open sourced it yet but here's a <a class="underline text-purple-700" href="https://gist.github.com/jvns/edf78e7775fea8888685a9a2956bc477">gist of the main server code</a>, so you can see basically what it does. It probably has a lot
+        of bugs right now. It's running on fly.io. </p>
+
+    <h1 class="text-2xl">
+        Who made it?
+    </h1>
+
+    <p class="my-4">
+        <a class="underline text-purple-700" href="https://jvns.ca">Julia Evans</a>
+    </p>
+</div>
+</body>
+
+</html>

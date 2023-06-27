@@ -1,0 +1,137 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title> nginx playground </title>
+    <script defer data-domain="nginx-playground.wizardzines.com" src="https://plausible.io/js/script.tagged-events.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/tailwind-classes.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<style>
+    body {
+        font-family: Inter;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <header style="height: 60px" class="flex justify-between p-2">
+            <div>
+                <h1 class="text-2xl md:text-3xl inline-block"><a href="/">★ nginx playground ★</a></h1>
+                <div class="inline-block ml-4">a <a class="text-purple-700 underline" href="https://wizardzines.com">wizard zines</a> project</div>
+            </div>
+            <div class="flex text-xl mr-8">
+                <span class="my-auto mr-8">
+                    <a href="/faq.html"> FAQ</a>
+                </span>
+                <span class="my-auto mr-8 relative cursor-pointer plausible-event-name=copy-url" @click="copyURL($event)">
+                    <svg class="inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                    </svg>
+                    Copy URL
+                    <!-- briefly display "copied"-->
+                    <span class="text-green-700 text-xs absolute" style="top: 100%; left: 20px;" v-if="copied">Copied!</span>
+                </span>
+                <span class="my-auto cursor-pointer plausible-event-name=run-config" @click="run($event)">
+                <svg class="inline" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.3 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"/></svg>
+                Run
+                </span>
+            </div>
+        </header>
+        <div id="pen" style="height: calc(100vh - 60px);">
+            <div class="flex flex-row h-full w-full">
+                <div class="bg-gray-200 w-1/2 px-4 pb-4 h-full">
+                    <div class="border border-gray-300 h-full" style="font-size: 14px">
+                        <div class="flex">
+                            <div class="flex-shrink p-2 bg-white" style="margin-top: 2px">
+                                <div class="text-xl">
+                                    <img class="inline" style="height: 1em" src="nginx.svg"> nginx config
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="height: calc(100% - 48px)">
+                            <textarea id="nginx" class="w-full h-full"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-full w-1/2 flex flex-col">
+                    <div class="bg-gray-200 w-1/2 px-4 pb-4 h-1/3 w-full">
+                        <div class="border border-gray-300 h-full" style="font-size: 14px">
+                            <div class="flex ">
+                                <div class="flex-shrink p-2 bg-white " style="margin-top: 2px ">
+                                    <div class="text-xl ">
+                                        <img class="inline" style="height: 1em " src="curl.png"> command
+                                    </div>
+                                </div>
+                                <div class="flex pl-4">
+                                    <span class="m-auto">(you can use <code><a class="underline" href="https://curl.github.io/curl-cheat-sheet/http-sheet.html">curl</a></code>  
+                                        or <code><a href="https://httpie.io/docs#examples" class="underline" target="_blank">http</a></code>)</span>
+                                </div>
+                            </div>
+
+                            <div style="height: calc(100% - 48px) ">
+                                <textarea id="curl" class="w-full h-full"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- curl result -->
+                    <div class="bg-gray-200 w-1/2 px-4 pb-4 w-full" :class="result_height()">
+                        <div class="border border-gray-300 h-full ">
+                            <div class="flex">
+                                <div class="flex-shrink p-2 bg-white" style="margin-top: 2px">
+                                    <div class="text-xl">
+                                        <img class="inline" style="height: 1em" src="terminal.svg"> output
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="w-full h-full relative">
+                                <div v-if="loading" class="absolute inset-24 flex z-10">
+                                    <img class="m-auto" src="rocket.gif">
+                                </div>
+                                <pre class="bg-white overflow-scroll p-4 whitespace-pre-wrap" style="font-size: 14px; height: calc(100% - 48px)" class="w-full">{{curl_result}}</pre>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- errors -->
+                    <div class="bg-gray-200 w-1/2 px-4 pb-4 w-full" :class="error_height()">
+                        <div class="border border-gray-300 h-full ">
+                            <div class="flex">
+                                <div class="flex-shrink p-2 bg-white bg-red-500 text-white" style="margin-top: 2px">
+                                    <div class="text-xl">
+                                        <!-- error icon-->
+                                        <svg class="inline" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg>                                        Errors
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full h-full relative">
+                                <div v-if="loading" class="absolute inset-24 flex z-10">
+                                    <img class="m-auto" src="rocket.gif">
+                                </div>
+                                <pre class="bg-white overflow-scroll p-4 whitespace-pre-wrap" style="font-size: 14px; height: calc(100% - 48px)" class="w-full">{{error}}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+    </div>
+    </div>
+</body>
+
+<script src="js/vue.global.prod.js"></script>
+<script src="codemirror-5.63.0/lib/codemirror.js"></script>
+<script src="codemirror-5.63.0/mode/nginx/nginx.js"></script>
+<script src="codemirror-5.63.0/mode/shell/shell.js"></script>
+<script src="codemirror-5.63.0/mode/javascript/javascript.js"></script>
+<link rel="stylesheet" href="codemirror-5.63.0/lib/codemirror.css">
+<script src="script.js "></script>
+
+</html>
