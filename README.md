@@ -15,7 +15,7 @@ about it in the issues.
 ## things you might want to change
 
 Some things that are specific to my deployment of this code, that you'll
-want to remove or change if you run it yourself or make significant changes:
+want to remove or change if you make significant changes:
 
 * "a wizard zines project" in the header
 * the analytics (grep for `plausible`)
