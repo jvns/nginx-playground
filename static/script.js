@@ -1,14 +1,16 @@
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+let nginx_cm = null;
+let curl_cm = null;
+
 const app = Vue.createApp({
     data() {
         return {
             nginx_config: "",
             curl_command: "",
             curl_result: "",
-            nginx_cm: undefined,
-            curl_cm: undefined,
             default_configs: {},
             error: false,
             loading: false,
@@ -24,24 +26,24 @@ const app = Vue.createApp({
         // create nginx codemirror
         const nginxArea = document.querySelector('#nginx');
         nginxArea.innerHTML = this.nginx_config;
-        this.nginx_cm = CodeMirror.fromTextArea(nginxArea, {
+        nginx_cm = CodeMirror.fromTextArea(nginxArea, {
             lineNumbers: true,
             mode: 'nginx',
         });
-        this.nginx_cm.setSize('100%', '100%')
+        nginx_cm.setSize('100%', '100%')
 
         // create curl codemirror
         const curlArea = document.querySelector('#curl');
         curlArea.innerHTML = this.curl_command;
-        this.curl_cm = CodeMirror.fromTextArea(curlArea, {
+        curl_cm = CodeMirror.fromTextArea(curlArea, {
             lineNumbers: true,
             mode: 'shell',
         });
-        this.curl_cm.setSize('100%', '100%');
+        curl_cm.setSize('100%', '100%');
 
         // set change handlers
-        this.nginx_cm.on('change', cm => this.update(cm.getValue(), undefined))
-        this.curl_cm.on('change', cm => this.update(undefined, cm.getValue()));
+        nginx_cm.on('change', cm => this.update(cm.getValue(), undefined))
+        curl_cm.on('change', cm => this.update(undefined, cm.getValue()));
     },
     methods: {
         update: function(nginx_config, curl_command) {
