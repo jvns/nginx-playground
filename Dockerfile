@@ -15,9 +15,9 @@ RUN apt-get update && apt-get install -y curl httpie && apt-get clean
 RUN apt-get -y install libcap2-bin
 RUN apt-get -y install bubblewrap
 COPY --from=go /go-httpbin/dist/go-httpbin /usr/bin/go-httpbin
-COPY --from=go /app/nginx-sandbox /app/nginx-sandbox
+COPY --from=go /app/nginx-playground /app/nginx-playground
 COPY --from=go /app/run_nginx /app/run_nginx
 
 WORKDIR /app
 
-CMD ["/app/nginx-sandbox"]
+CMD ["/app/nginx-playground"]
