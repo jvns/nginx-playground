@@ -36,7 +36,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	// make a request to localhost:8080 with `healthcheck` as the body
 	// if it works, return 200
 	// if it doesn't, return 500
-	client := http.Client{Timeout: 2 * time.Second}
+	client := http.Client{Timeout: 5 * time.Second}
 	resp, err := client.Post("http://localhost:8080/", "application/json", strings.NewReader(healthcheck))
 	if err != nil {
 		log.Println(err)
